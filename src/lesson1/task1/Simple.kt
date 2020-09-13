@@ -65,10 +65,7 @@ fun main() {
  * Пользователь задает время в часах, минутах и секундах, например, 8:20:35.
  * Рассчитать время в секундах, прошедшее с начала суток (30035 в данном случае).
  */
-fun seconds(hours: Int, minutes: Int, seconds: Int): Int {
-    val result = hours * 3600 + minutes * 60 + seconds;
-    return result;
-}
+fun seconds(hours: Int, minutes: Int, seconds: Int): Int = hours * 3600 + minutes * 60 + seconds;
 
 /**
  * Тривиальная (1 балл)
@@ -77,11 +74,9 @@ fun seconds(hours: Int, minutes: Int, seconds: Int): Int {
  * Определить длину того же отрезка в метрах (в данном случае 18.98).
  * 1 сажень = 3 аршина = 48 вершков, 1 вершок = 4.445 см.
  */
-fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double {
-    val centimeters = sagenes * 48 * 4.445 + arshins * 16 * 4.445 + vershoks * 4.445;
-    val meters = centimeters / 100.0;
-    return meters;
-}
+fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
+    4.445 * (sagenes * 48 + arshins * 16 + vershoks) / 100;
+
 
 /**
  * Тривиальная (1 балл)
@@ -138,8 +133,7 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
  */
 fun accountInThreeYears(initial: Int, percent: Int): Double {
     val rate = (percent + 100) / 100.0;
-    val money = initial * rate * rate * rate;
-    return money;
+    return initial * Math.pow(rate, 3.0);
 }
 
 /**
@@ -148,7 +142,6 @@ fun accountInThreeYears(initial: Int, percent: Int): Double {
  * Пользователь задает целое трехзначное число (например, 478).
  * Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
-fun numberRevert(number: Int): Int {
-    val finalNumber = ((number % 100) % 10) * 100 + ((number % 100) / 10) * 10 + number / 100;
-    return finalNumber;
-}
+fun numberRevert(number: Int): Int = (number % 10) * 100 + ((number % 100) / 10) * 10 + number / 100;
+
+
