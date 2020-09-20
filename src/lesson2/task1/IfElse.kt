@@ -90,9 +90,12 @@ fun timeForHalfWay(
     t2: Double, v2: Double,
     t3: Double, v3: Double
 ): Double {
-    val S = t1 * v1 + t2 * v2 + t3 * v3
-    val vAverage = S / (t1 + t2 + t3)
-    return S / (2 * vAverage)
+    val halfS = (t1 * v1 + t2 * v2 + t3 * v3) / 2.0
+    return when {
+        halfS < (t1 * v1) -> halfS / v1
+        halfS >= (t1 * v1) && halfS < (t1 * v1 + t2 * v2) -> t1 + (halfS - t1 * v1) / v2
+        else -> t1 + t2 + (halfS - t1 * v1 - t2 * v2) / v3
+    }
 }
 
 /**
