@@ -3,10 +3,7 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
-import kotlin.math.max
-import kotlin.math.sqrt
-import kotlin.math.abs
-import kotlin.math.pow
+import kotlin.math.*
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
 // Максимальное количество баллов = 6
@@ -92,7 +89,6 @@ fun timeForHalfWay(
 ): Double {
     val halfS = (t1 * v1 + t2 * v2 + t3 * v3) / 2.0
     return when {
-        halfS < (t1 * v1) -> halfS / v1
         halfS >= (t1 * v1) && halfS < (t1 * v1 + t2 * v2) -> t1 + (halfS - t1 * v1) / v2
         else -> t1 + t2 + (halfS - t1 * v1 - t2 * v2) / v3
     }
@@ -111,11 +107,17 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int = when {
-    (kingX == rookX1 || kingX == rookX2) && (kingY == rookY1 || kingY == rookY2) -> 3
-    (kingX != rookX1 && kingX == rookX2) || (kingY != rookY1 && kingY == rookY2) -> 2
-    (kingX == rookX1 && kingX != rookX2) || (kingY == rookY1 && kingY != rookY2) -> 1
-    else -> 0
+): Int {
+    val kingAndRook1X = (kingX == rookX1)
+    val kingAndRook2X = (kingX == rookX2)
+    val kingAndRook1Y = (kingY == rookY1)
+    val kingAndRook2Y = (kingY == rookY2)
+    return when {
+        (kingAndRook1X || kingAndRook2X) && (kingAndRook1Y || kingAndRook2Y) -> 3
+        (!kingAndRook1X && kingAndRook2X) || (!kingAndRook1Y && kingAndRook2Y) -> 2
+        (kingAndRook1X && !kingAndRook2X) || (kingAndRook1Y && !kingAndRook2Y) -> 1
+        else -> 0
+    }
 }
 
 /**
@@ -132,11 +134,17 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int = when {
-    abs(bishopX - kingX) == abs(bishopY - kingY) && ((rookX == kingX) || (rookY == kingY)) -> 3
-    abs(bishopX - kingX) == abs(bishopY - kingY) && ((rookX != kingX) && (rookY != kingY)) -> 2
-    abs(bishopX - kingX) != abs(bishopY - kingY) && ((rookX == kingX) || (rookY == kingY)) -> 1
-    else ->0
+): Int {
+    val differenceBishopKingX = abs(bishopX - kingX)
+    val differenceBishopKingY = abs(bishopY - kingY)
+    val bishopAndKingX = (rookX == kingX)
+    val bishopAndKingY = (rookY == kingY)
+    return when {
+        (differenceBishopKingX == differenceBishopKingY) && (bishopAndKingX || bishopAndKingY) -> 3
+        (differenceBishopKingX == differenceBishopKingY) && (!bishopAndKingX && !bishopAndKingY) -> 2
+        (differenceBishopKingX != differenceBishopKingY) && (bishopAndKingX || bishopAndKingY) -> 1
+        else -> 0
+    }
 }
 
 /**
@@ -149,8 +157,8 @@ fun rookOrBishopThreatens(
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int = when {
     (a > b + c) || (b > a + c) || (c > b + a) -> -1
-    (a.pow(2) > b.pow(2) + c.pow(2) ) || (b.pow(2) > a.pow(2) + c.pow(2)) || (c.pow(2) > b.pow(2) + a.pow(2)) -> 2
-    (a.pow(2) == b.pow(2) + c.pow(2) ) || (b.pow(2) == a.pow(2) + c.pow(2)) || (c.pow(2) == b.pow(2) + a.pow(2)) -> 1
+    (a.pow(2) > b.pow(2) + c.pow(2)) || (b.pow(2) > a.pow(2) + c.pow(2)) || (c.pow(2) > b.pow(2) + a.pow(2)) -> 2
+    (a.pow(2) == b.pow(2) + c.pow(2)) || (b.pow(2) == a.pow(2) + c.pow(2)) || (c.pow(2) == b.pow(2) + a.pow(2)) -> 1
     else -> 0
 }
 
@@ -163,12 +171,6 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = when {
  * Если пересечения нет, вернуть -1.
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
-    (a < c && b < c) || (c < a && d < a) -> -1
-    (a > c) && (b <= d) -> b - a
-    (a > c) && (b > d) -> d - a
-    (a < c) && (b >= d) -> d - c
-    (a < c) && (b < d) -> b - c
-    (a == c) && (b <= d) -> b - a
-    (a == c) && (d < b) -> d - a
-    else -> -1
+    (a > d) || (b < c) -> -1
+    else -> min(b, d) - max(a, c)
 }

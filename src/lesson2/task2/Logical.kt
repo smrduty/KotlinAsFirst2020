@@ -32,7 +32,7 @@ fun isNumberHappy(number: Int): Boolean =
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
-    (x1 == x2) or (y1 == y2) or (abs(x1 - x2) == abs(y1 - y2))
+    (x1 == x2) || (y1 == y2) || (abs(x1 - x2) == abs(y1 - y2))
 
 /**
  * Простая (2 балла)
@@ -47,6 +47,7 @@ fun daysInMonth(month: Int, year: Int): Int = when {
     month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12 -> 31
     else -> 30
 }
+
 
 /**
  * Простая (2 балла)
@@ -71,4 +72,6 @@ fun circleInside(
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean =
-    (r >= a && s >= b) || (r >= a && s >= c) || (r >= b && s >= c) || (s >= a && r >= b) || (s >= a && r >= c) || (s >= b && r >= c)
+    (r >= a && s >= b) || (r >= a && s >= c) ||
+            (r >= b && s >= c) || (s >= a && r >= b) ||
+            (s >= a && r >= c) || (s >= b && r >= c)
