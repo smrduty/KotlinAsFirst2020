@@ -90,18 +90,10 @@ fun timeForHalfWay(
     val halfS = (t1 * v1 + t2 * v2 + t3 * v3) / 2.0
     return when {
         halfS < (t1 * v1) -> halfS / v1
-        halfS >= (t1 * v1) && halfS < (t1 * v1 + t2 * v2) -> t1 + (halfS - t1 * v1) / v2
+        halfS < (t1 * v1 + t2 * v2) -> t1 + (halfS - t1 * v1) / v2
         else -> t1 + t2 + (halfS - t1 * v1 - t2 * v2) / v3
     }
 }
-
-
-/*val halfS = (t1 * v1 + t2 * v2 + t3 * v3) / 2.0
-return when {
-    halfS < (t1 * v1) -> halfS / v1
-    halfS >= (t1 * v1) && halfS < (t1 * v1 + t2 * v2) -> t1 + (halfS - t1 * v1) / v2
-    else -> t1 + t2 + (halfS - t1 * v1 - t2 * v2) / v3
-}*/
 
 /**
  * Простая (2 балла)
