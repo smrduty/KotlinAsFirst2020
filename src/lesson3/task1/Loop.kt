@@ -66,6 +66,8 @@ fun digitCountInNumber(n: Int, m: Int): Int =
         else -> digitCountInNumber(n / 10, m) + digitCountInNumber(n % 10, m)
     }
 
+fun countOfDigits(n: Int) = ceil(log(n + 0.5, 10.0))
+
 /**
  * Простая (2 балла)
  *
@@ -93,13 +95,13 @@ fun digitNumber(n: Int): Int {
 fun fib(n: Int): Int {
     var current = 1
     var previous = 1
-    if (n in 1..2) return 1
+    return if (n in 1..2) 1
     else {
         for (i in 3..n) {
             current += previous
             previous = current - previous
         }
-        return current
+        current
     }
 }
 
@@ -121,7 +123,7 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    for (i in n - 1 downTo 1) {
+    for (i in n / 2 downTo 1) {
         if (n % i == 0) return i
     }
     return 1
@@ -177,7 +179,8 @@ fun lcm(m: Int, n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    for (i in 2..m) {
+    if (m % n == 0 || n % m == 0) return false
+    for (i in 2..sqrt(m.toDouble()).toInt()) {
         if (n % i == 0 && m % i == 0) return false
     }
     return true
@@ -201,12 +204,12 @@ fun squareBetweenExists(m: Int, n: Int): Boolean = floor(sqrt(n.toDouble())) - c
  */
 fun revert(n: Int): Int {
     var number = n
-    var reversedNumber = 0.0
-    for (i in ceil(log(number + 0.5, 10.0)).toInt() - 1 downTo 0) { // Подсчет количества цифр в числе
-        reversedNumber += (number % 10) * 10.0.pow(i)
+    var reversedNumber = 0
+    for (i in countOfDigits(number).toInt() - 1 downTo 1) {
+        reversedNumber = (reversedNumber + number % 10) * 10
         number /= 10
     }
-    return reversedNumber.toInt()
+    return reversedNumber + number
 }
 
 /**
@@ -220,12 +223,13 @@ fun revert(n: Int): Int {
  */
 fun isPalindrome(n: Int): Boolean {
     var number = n
-    var countOfDigits = ceil(log(n.toDouble() + 0.5, 10.0)).toInt() // Подсчет количества цифр в числе
-    for (i in 1..(countOfDigits / 2)) {
-        if (number / 10.0.pow(countOfDigits - 1).toInt() != number % 10) return false
-        number %= (10.0.pow(countOfDigits - 1)).toInt()
+    var digits = countOfDigits(n).toInt()
+    for (i in 1..(digits / 2)) {
+        val remainder = 10.0.pow(digits - 1).toInt()
+        if (number / remainder != number % 10) return false
+        number %= remainder
         number /= 10
-        countOfDigits -= 2
+        digits -= 2
     }
     return true
 }
@@ -285,7 +289,7 @@ fun squareSequenceDigit(n: Int): Int {
     while (digits < n) {
         square += 1.0
         lastSquare = square.pow(2)
-        digits += ceil(log(sqr(square) + 0.5, 10.0)).toInt() // Подсчет количества цифр в числе
+        digits += countOfDigits(sqr(square).toInt()).toInt()
     }
     val number = digits - n
     return ((lastSquare / 10.0.pow(number)) % 10).toInt()
@@ -309,7 +313,7 @@ fun fibSequenceDigit(n: Int): Int {
         while (digits < n) {
             current += previous
             previous = current - previous
-            val countOfTempFib = ceil(log(current.toDouble() + 0.5, 10.0)) // Количество цифр в числе Фибоначчи
+            val countOfTempFib = countOfDigits(current)
             digits += countOfTempFib.toInt()
         }
     }
