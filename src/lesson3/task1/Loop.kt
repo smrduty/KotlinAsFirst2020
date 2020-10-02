@@ -76,7 +76,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var countDigits = 0
-    var number = n
+    var number = abs(n)
     do {
         countDigits++
         number /= 10
