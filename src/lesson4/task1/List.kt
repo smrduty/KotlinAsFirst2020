@@ -243,6 +243,7 @@ fun factorizeToString(n: Int): String = factorize(n).sorted().joinToString(separ
 fun convert(n: Int, base: Int): List<Int> {
     var number = n
     val numberInNumberSystem = mutableListOf<Int>()
+    if (n == 0) return listOf(0)
     while (number != 0) {
         numberInNumberSystem.add(number % base)
         number /= base
@@ -264,6 +265,7 @@ fun convert(n: Int, base: Int): List<Int> {
 fun convertToString(n: Int, base: Int): String {
     var numberDecimal = n
     var numberHexadecimal = ""
+    if (n == 0) return "0"
     while (numberDecimal != 0) {
         val tempRemainder = numberDecimal % base
         numberHexadecimal +=
