@@ -176,11 +176,13 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Значение пустого многочлена равно 0 при любом x.
  */
 fun polynom(p: List<Int>, x: Int): Int {
-    var pX = 0.0
+    var pX = 0
+    var coef = 1
     for (i in p.indices) {
-        pX += x.toDouble().pow(i) * p[i].toDouble()
+        pX += coef * p[i]
+        coef *= x
     }
-    return pX.toInt()
+    return pX
 }
 
 /**
@@ -209,17 +211,14 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  */
 fun factorize(n: Int): List<Int> {
     var number = n
-    var primeDivisor: Int
+    var divisor = 2
     val primeFactors = mutableListOf<Int>()
     while (number != 1) {
-        for (i in 2..number) {
-            if (number % i == 0) {
-                primeDivisor = i
-                number /= primeDivisor
-                primeFactors.add(primeDivisor)
-                break
-            }
+        while (number % divisor == 0) {
+            primeFactors.add(divisor)
+            number /= divisor
         }
+        divisor += 1
     }
     return primeFactors.sorted()
 }
@@ -231,7 +230,7 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = factorize(n).sorted().joinToString(separator = "*")
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя (3 балла)
@@ -243,11 +242,11 @@ fun factorizeToString(n: Int): String = factorize(n).sorted().joinToString(separ
 fun convert(n: Int, base: Int): List<Int> {
     var number = n
     val numberInNumberSystem = mutableListOf<Int>()
-    if (n == 0) return listOf(0)
-    while (number != 0) {
+    // if (n == 0) return listOf(0)
+    do {
         numberInNumberSystem.add(number % base)
         number /= base
-    }
+    } while (number != 0)
     return numberInNumberSystem.reversed()
 }
 
@@ -263,17 +262,13 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    var numberDecimal = n
-    var numberHexadecimal = ""
-    if (n == 0) return "0"
-    while (numberDecimal != 0) {
-        val tempRemainder = numberDecimal % base
-        numberHexadecimal +=
-            if (tempRemainder > 9) (tempRemainder + 87).toChar()
-            else (tempRemainder + 48).toChar()
-        numberDecimal /= base
+    var result = ""
+    val numberInNumberSystem = convert(n, base)
+    for (i in numberInNumberSystem) {
+        if (i > 9) result += ((i - 10 + 'a'.toInt()).toChar())
+        else result += i.toString()
     }
-    return numberHexadecimal.reversed()
+    return result
 }
 
 
@@ -287,8 +282,10 @@ fun convertToString(n: Int, base: Int): String {
 fun decimal(digits: List<Int>, base: Int): Int {
     val digitsRev = digits.reversed()
     var result = 0
+    var tempDegree = 1
     for (i in digitsRev.indices) {
-        result += (base.toDouble().pow(i) * digitsRev[i]).toInt()
+        result += tempDegree * digitsRev[i]
+        tempDegree *= base
     }
     return result
 }
@@ -306,13 +303,16 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * (например, str.toInt(base)), запрещается.
  */
 fun decimalFromString(str: String, base: Int): Int {
-    var decimalNumber = 0.0
+    var decimalNumber = 0
+    val str = str.reversed()
+    var tempDegree = 1
     for (i in str.indices) {
         decimalNumber +=
-            if (str[i].toInt() > 96) (str[i].toInt() - 87) * base.toDouble().pow(str.length - i - 1)
-            else (str[i].toInt() - 48) * base.toDouble().pow(str.length - i - 1)
+            if (str[i] >= 'a') (str[i].toInt() + 10 - 'a'.toInt()) * tempDegree
+            else (str[i] - '0') * tempDegree
+        tempDegree *= base
     }
-    return decimalNumber.toInt()
+    return decimalNumber
 }
 
 /**
