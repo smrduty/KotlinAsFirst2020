@@ -358,7 +358,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     for (i in list.indices) {
         if ((number - list[i]) in list && (list.indexOfFirst { it == number - list[i] } != list.indexOfLast { it == list[i] })) {
             minIndex = i
-            maxIndex = list.size - i - 1
+            maxIndex = list.indexOfFirst { it == number - list[i] }
             break
         }
     }
