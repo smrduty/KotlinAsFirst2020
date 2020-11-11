@@ -204,11 +204,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
             sortedStockPrices[stockPrices[i].first]!!.add(stockPrices[i].second)
         }
     }
-    val averageSortedStockPrices = mutableMapOf<String, Double>()
-    for ((key, list) in sortedStockPrices) {
-        averageSortedStockPrices[key] = list.sum() / list.size
-    }
-    return averageSortedStockPrices
+    return sortedStockPrices.mapValues { it.value.sum() / it.value.size }
 }
 
 /**
@@ -254,10 +250,11 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    val letters = mutableSetOf<Char>()
     for (i in word) {
-        if (i !in chars) return false
+        letters.add(i)
     }
-    return true
+    return letters.union(chars).size == chars.size
 }
 
 /**
@@ -274,13 +271,14 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val repeats = mutableMapOf<String, Int>()
-    val letters = list.toSet()
-    for (letter in letters) {
-        val tempCount = list.count { it == letter }
-        if (tempCount > 1) {
-            repeats[letter] = tempCount
+    for (i in list) {
+        if (i in repeats.keys) {
+            repeats += i to (repeats[i]?.plus(1) ?: 0)
+        } else {
+            repeats[i] = 1
         }
     }
+    repeats.filter { it.value == 1 }.forEach { repeats.remove(it.key) }
     return repeats
 }
 
@@ -353,16 +351,17 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    var minIndex = -1
-    var maxIndex = -1
+    if (list.size <= 1) return Pair(-1, -1)
+    val digitsAndIndexes = mutableMapOf<Int, Int>()
+    var tempDigit: Int
     for (i in list.indices) {
-        if ((number - list[i]) in list && (list.indexOfFirst { it == number - list[i] } != list.indexOfLast { it == list[i] })) {
-            minIndex = i
-            maxIndex = list.indexOfFirst { it == number - list[i] }
-            break
+        tempDigit = number - list[i]
+        if (tempDigit in digitsAndIndexes.keys) {
+            return Pair(digitsAndIndexes[tempDigit]!!, i)
         }
+        digitsAndIndexes[list[i]] = i
     }
-    return Pair(minIndex, maxIndex)
+    return Pair(-1, -1)
 }
 
 /**
