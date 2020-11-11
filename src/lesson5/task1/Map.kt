@@ -254,7 +254,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     for (i in word) {
         letters.add(i)
     }
-    return letters.union(chars).size == chars.size
+    return letters.intersect(chars).size == letters.size
 }
 
 /**
