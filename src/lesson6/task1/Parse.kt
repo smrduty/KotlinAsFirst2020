@@ -74,7 +74,44 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun isBissextileYear(year: Int): Boolean {
+    if ((year % 400 == 0) || (year % 4 == 0 && year % 100 != 0)) return true
+    return false
+}
+
+fun dateStrToDigit(str: String): String {
+    var date = ""
+    val elementsOfStr = str.split(" ")
+    try {
+        date += if (elementsOfStr[0].toInt() < 10) "0" + elementsOfStr[0] + "."
+        else elementsOfStr[0] + "."
+        date += when (elementsOfStr[1]) {
+            "января" -> "01"
+            "февраля" -> "02"
+            "марта" -> "03"
+            "апреля" -> "04"
+            "мая" -> "05"
+            "июня" -> "06"
+            "июля" -> "07"
+            "августа" -> "08"
+            "сентября" -> "09"
+            "октября" -> "10"
+            "ноября" -> "11"
+            "декабря" -> "12"
+            else -> ""
+        }
+        date += "." + elementsOfStr[2]
+        val year = elementsOfStr[2].toInt()
+        return if (date.length != 10 || elementsOfStr[0].toInt() > 31 || (elementsOfStr[0]
+                .toInt() > 28 && !isBissextileYear(year))
+        ) ""
+        else date
+    } catch (e: IndexOutOfBoundsException) {
+        return ""
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+}
 
 /**
  * Средняя (4 балла)
@@ -86,7 +123,36 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val elementsOfDigital = digital.split(".")
+    try {
+        val day = if (elementsOfDigital[0].toInt() in 0..9) "${elementsOfDigital[0][1]}" else elementsOfDigital[0]
+        val month = when (elementsOfDigital[1]) {
+            "01" -> "января"
+            "02" -> "февраля"
+            "03" -> "марта"
+            "04" -> "апреля"
+            "05" -> "мая"
+            "06" -> "июня"
+            "07" -> "июля"
+            "08" -> "августа"
+            "09" -> "сентября"
+            "10" -> "октября"
+            "11" -> "ноября"
+            "12" -> "декабря"
+            else -> ""
+        }
+        val year = elementsOfDigital[2]
+        return if (month == "" || day.toInt() > 31 || (day
+                .toInt() > 28 && !isBissextileYear(year.toInt())) || elementsOfDigital.size > 3
+        ) ""
+        else String.format("%s %s %s", day, month, year)
+    } catch (e: IndexOutOfBoundsException) {
+        return ""
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+}
 
 /**
  * Средняя (4 балла)
@@ -114,7 +180,23 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun isNumber(str: String): Boolean {
+    for (i in str) {
+        if (!i.isDigit()) return false
+    }
+    return true
+}
+
+fun bestLongJump(jumps: String): Int {
+    var max = -1
+    val elements = jumps.split(" ")
+    for (elem in elements) {
+        if (elem.length == 1 && elem != "%" && elem != "-") return -1
+        if (isNumber(elem) && elem.toInt() > max) max = elem.toInt()
+    }
+    return max
+}
+
 
 /**
  * Сложная (6 баллов)
@@ -138,7 +220,23 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    var result = 0
+    val elements = expression.split(" ")
+    if (isNumber(elements[0])) result += elements[0].toInt()
+    else throw IllegalArgumentException()
+    for (i in 1 until elements.size) {
+        if (i % 2 == 0 && isNumber(elements[i])) {
+            when (elements[i - 1]) {
+                "+" -> result += elements[i].toInt()
+                "-" -> result -= elements[i].toInt()
+                else -> throw IllegalArgumentException()
+            }
+        } else if (i % 2 == 1 && (elements[i] == "+" || elements[i] == "-")) continue
+        else throw IllegalArgumentException()
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)
@@ -149,7 +247,19 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val words = str.split(" ")
+    var sizeBeforeIndex = -1
+    try {
+        for (i in 0..words.size - 2) {
+            if (words[i].toLowerCase() == words[i + 1].toLowerCase()) return sizeBeforeIndex + 1
+            sizeBeforeIndex += words[i].length + 1
+        }
+    } catch (e: java.lang.IndexOutOfBoundsException) {
+        return -1
+    }
+    return sizeBeforeIndex
+}
 
 /**
  * Сложная (6 баллов)
