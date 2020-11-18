@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -74,18 +76,13 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun isBissextileYear(year: Int): Boolean {
-    if ((year % 400 == 0) || (year % 4 == 0 && year % 100 != 0)) return true
-    return false
-}
 
 fun dateStrToDigit(str: String): String {
-    var date = ""
     val elementsOfStr = str.split(" ")
     try {
-        date += if (elementsOfStr[0].toInt() < 10) "0" + elementsOfStr[0] + "."
-        else elementsOfStr[0] + "."
-        date += when (elementsOfStr[1]) {
+        val day = twoDigitStr(elementsOfStr[0].toInt())
+        val year = elementsOfStr[2].toInt()
+        val month = when (elementsOfStr[1]) {
             "января" -> "01"
             "февраля" -> "02"
             "марта" -> "03"
@@ -100,12 +97,8 @@ fun dateStrToDigit(str: String): String {
             "декабря" -> "12"
             else -> ""
         }
-        date += "." + elementsOfStr[2]
-        val year = elementsOfStr[2].toInt()
-        return if (date.length != 10 || elementsOfStr[0].toInt() > 31 || (elementsOfStr[0]
-                .toInt() > 28 && !isBissextileYear(year))
-        ) ""
-        else date
+        return if (daysInMonth(month.toInt(), year) < day.toInt() || month == "" || elementsOfStr.size > 3) ""
+        else "$day.$month.$year"
     } catch (e: IndexOutOfBoundsException) {
         return ""
     } catch (e: NumberFormatException) {
@@ -127,6 +120,7 @@ fun dateDigitToStr(digital: String): String {
     val elementsOfDigital = digital.split(".")
     try {
         val day = if (elementsOfDigital[0].toInt() in 0..9) "${elementsOfDigital[0][1]}" else elementsOfDigital[0]
+        val year = elementsOfDigital[2].toInt()
         val month = when (elementsOfDigital[1]) {
             "01" -> "января"
             "02" -> "февраля"
@@ -142,11 +136,12 @@ fun dateDigitToStr(digital: String): String {
             "12" -> "декабря"
             else -> ""
         }
-        val year = elementsOfDigital[2]
-        return if (month == "" || day.toInt() > 31 || (day
-                .toInt() > 28 && !isBissextileYear(year.toInt())) || elementsOfDigital.size > 3
+        return if (daysInMonth(
+                elementsOfDigital[1].toInt(),
+                year
+            ) < day.toInt() || month == "" || elementsOfDigital.size > 3
         ) ""
-        else String.format("%s %s %s", day, month, year)
+        else "$day $month $year"
     } catch (e: IndexOutOfBoundsException) {
         return ""
     } catch (e: NumberFormatException) {
@@ -190,11 +185,15 @@ fun isNumber(str: String): Boolean {
 fun bestLongJump(jumps: String): Int {
     var max = -1
     val elements = jumps.split(" ")
-    for (elem in elements) {
-        if (elem.length == 1 && elem != "%" && elem != "-") return -1
-        if (isNumber(elem) && elem.toInt() > max) max = elem.toInt()
+    try {
+        for (elem in elements) {
+            if (elem.length == 1 && elem != "%" && elem != "-") return -1
+            if (isNumber(elem) && elem.toInt() > max) max = elem.toInt()
+        }
+        return max
+    } catch (e: NumberFormatException) {
+        return -1
     }
-    return max
 }
 
 
@@ -223,8 +222,8 @@ fun bestHighJump(jumps: String): Int = TODO()
 fun plusMinus(expression: String): Int {
     var result = 0
     val elements = expression.split(" ")
-    if (isNumber(elements[0])) result += elements[0].toInt()
-    else throw IllegalArgumentException()
+    if (Regex("""(\d [+-])|^\d$""").find(expression) == null) throw IllegalArgumentException()
+    else result += elements[0].toInt()
     for (i in 1 until elements.size) {
         if (i % 2 == 0 && isNumber(elements[i])) {
             when (elements[i - 1]) {
@@ -248,17 +247,17 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int {
-    val words = str.split(" ")
+    val words = str.toLowerCase().split(" ")
     var sizeBeforeIndex = -1
     try {
         for (i in 0..words.size - 2) {
-            if (words[i].toLowerCase() == words[i + 1].toLowerCase()) return sizeBeforeIndex + 1
+            if (words[i] == words[i + 1]) return sizeBeforeIndex + 1
             sizeBeforeIndex += words[i].length + 1
         }
     } catch (e: java.lang.IndexOutOfBoundsException) {
         return -1
     }
-    return sizeBeforeIndex
+    return -1
 }
 
 /**
