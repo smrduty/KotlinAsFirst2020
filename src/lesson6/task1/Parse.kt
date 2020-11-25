@@ -222,7 +222,7 @@ fun bestHighJump(jumps: String): Int = TODO()
 fun plusMinus(expression: String): Int {
     var result = 0
     val elements = expression.split(" ")
-    if (Regex("""(\d [+-])|^\d+$""").find(expression) == null) throw IllegalArgumentException()
+    if (Regex("""^(\d+( [+-] )?)+$""").find(expression) == null) throw IllegalArgumentException()
     else result += elements[0].toInt()
     for (i in 1 until elements.size) {
         if (i % 2 == 0 && isNumber(elements[i])) {
