@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import kotlin.math.*
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -63,7 +64,16 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    for (line in File(inputName).readLines()) {
+        if (line.isEmpty()) {
+            writer.newLine()
+            writer.newLine()
+        } else if (line[0] != '_') {
+            writer.append(line)
+        }
+    }
+    writer.close()
 }
 
 /**
@@ -75,7 +85,50 @@ fun deleteMarked(inputName: String, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+
+fun occurrencesString(line: String, str: String): Int {
+    var count = 0
+    for (i in 0..line.length - str.length) {
+        if (line[i] == str[0]) {
+            count += 1
+            for (j in i + 1 until i + str.length) {
+                if (line[j] != str[j - i]) {
+                    count -= 1
+                    break
+                }
+            }
+        }
+    }
+    return count
+}
+
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val countOfStrings = mutableMapOf<String, Int>()
+    val substringsLower = mutableListOf<String>()// = substrings.forEach { it.toLowerCase() }
+    for (i in substrings) {
+        substringsLower.add(i.toLowerCase())
+        countOfStrings[i] = 0
+    }
+    for (line in File(inputName).readLines()) {
+        val lineLower = line.toLowerCase()
+        for (substr in substringsLower) {
+            if (substr in lineLower) {
+                val index = substringsLower.indexOf(substr)
+                countOfStrings[substrings[index]] =
+                    countOfStrings[substrings[index]]!! + occurrencesString(
+                        lineLower,
+                        substr
+                    )//Regex(substr).findAll(lineLower).count()
+                //lineLower.split(substr).size - 1
+            }
+        }
+        /*if (lineLower in substringsLower) {
+            val index = substringsLower.indexOf(lineLower)
+            countOfStrings[substrings[index]] = countOfStrings[substrings[index]]!! + 1
+        }*/
+    }
+    return countOfStrings
+}
 
 
 /**
@@ -268,15 +321,15 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  *
  * Соответствующий выходной файл:
 <html>
-    <body>
-        <p>
-            Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
-            Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
-        </p>
-        <p>
-            Suspendisse <s>et elit in enim tempus iaculis</s>.
-        </p>
-    </body>
+<body>
+<p>
+Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
+Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
+</p>
+<p>
+Suspendisse <s>et elit in enim tempus iaculis</s>.
+</p>
+</body>
 </html>
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
@@ -319,65 +372,65 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  *
  * Пример входного файла:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
-* Утка по-пекински
-    * Утка
-    * Соус
-* Салат Оливье
-    1. Мясо
-        * Или колбаса
-    2. Майонез
-    3. Картофель
-    4. Что-то там ещё
-* Помидоры
-* Фрукты
-    1. Бананы
-    23. Яблоки
-        1. Красные
-        2. Зелёные
+ * Утка по-пекински
+ * Утка
+ * Соус
+ * Салат Оливье
+1. Мясо
+ * Или колбаса
+2. Майонез
+3. Картофель
+4. Что-то там ещё
+ * Помидоры
+ * Фрукты
+1. Бананы
+23. Яблоки
+1. Красные
+2. Зелёные
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  *
  *
  * Соответствующий выходной файл:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
 <html>
-  <body>
-    <p>
-      <ul>
-        <li>
-          Утка по-пекински
-          <ul>
-            <li>Утка</li>
-            <li>Соус</li>
-          </ul>
-        </li>
-        <li>
-          Салат Оливье
-          <ol>
-            <li>Мясо
-              <ul>
-                <li>Или колбаса</li>
-              </ul>
-            </li>
-            <li>Майонез</li>
-            <li>Картофель</li>
-            <li>Что-то там ещё</li>
-          </ol>
-        </li>
-        <li>Помидоры</li>
-        <li>Фрукты
-          <ol>
-            <li>Бананы</li>
-            <li>Яблоки
-              <ol>
-                <li>Красные</li>
-                <li>Зелёные</li>
-              </ol>
-            </li>
-          </ol>
-        </li>
-      </ul>
-    </p>
-  </body>
+<body>
+<p>
+<ul>
+<li>
+Утка по-пекински
+<ul>
+<li>Утка</li>
+<li>Соус</li>
+</ul>
+</li>
+<li>
+Салат Оливье
+<ol>
+<li>Мясо
+<ul>
+<li>Или колбаса</li>
+</ul>
+</li>
+<li>Майонез</li>
+<li>Картофель</li>
+<li>Что-то там ещё</li>
+</ol>
+</li>
+<li>Помидоры</li>
+<li>Фрукты
+<ol>
+<li>Бананы</li>
+<li>Яблоки
+<ol>
+<li>Красные</li>
+<li>Зелёные</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+</p>
+</body>
 </html>
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
@@ -404,23 +457,23 @@ fun markdownToHtml(inputName: String, outputName: String) {
  * Вывести в выходной файл процесс умножения столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 111):
-   19935
-*    111
+19935
+ *    111
 --------
-   19935
+19935
 + 19935
 +19935
 --------
- 2212785
+2212785
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  * Нули в множителе обрабатывать так же, как и остальные цифры:
-  235
-*  10
+235
+ *  10
 -----
-    0
+0
 +235
 -----
- 2350
+2350
  *
  */
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
@@ -434,21 +487,83 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  * Вывести в выходной файл процесс деления столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 22):
-  19935 | 22
- -198     906
- ----
-    13
-    -0
-    --
-    135
-   -132
-   ----
-      3
+19935 | 22
+-198     906
+----
+13
+-0
+--
+135
+-132
+----
+3
 
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  *
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
+    File(outputName).bufferedWriter().use {
+        val elementsOfOutput = mutableListOf<Pair<String, String>>()
+        val lhvString = lhv.toString()
+        if (lhv < rhv) elementsOfOutput.add(Pair(lhvString, "-0"))
+        else {
+            var temp = if (rhv.toString().length > 1) lhvString.substring(0, rhv.toString().length).toInt()
+            else lhvString.substring(0, rhv.toString().length).toInt()
+            elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
+            for (i in temp.toString().length until lhvString.length) {
+                if (temp / rhv > 0) {
+                    elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
+                    temp = lhvString[i].toString().toInt()
+                    if (i == lhvString.length - 1) elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
+                } else {
+                    temp = 10 * temp + lhvString[i].toString().toInt()
+                    elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
+                }
+                if (temp / rhv > 0) {
+                    temp %= rhv
+                }
+
+            }
+            if (elementsOfOutput[0].second == "-0") elementsOfOutput.removeAt(0)
+        }
+        if (elementsOfOutput.size > 1) {
+            for (i in 1 until elementsOfOutput.size) {
+                if (elementsOfOutput[i - 1].first.toInt() % rhv == 0) elementsOfOutput[i] =
+                    "0${elementsOfOutput[i].first}" to elementsOfOutput[i].second
+            }
+        }
+        it.write(" $lhv | $rhv")
+        var first = elementsOfOutput[0].first
+        var second = elementsOfOutput[0].second
+        var countSpaces = if (second == "-0") 1 else 1
+        it.newLine()
+        it.append(
+            (if (second == "-0") second.padStart(first.length + 1) else second) +
+                    "".padStart(lhvString.length - first.length + 3) + "${lhv / rhv}"
+        )
+        it.newLine()
+        it.append(
+            "".padStart(first.length + if (first.length == second.length - 1) 1 else 0, '-')
+                .padStart(countSpaces + first.length + if (second.length - 1 == first.length) -1 else 0)
+        )
+        countSpaces += second.length - 1 - (first.toInt() + second.toInt()).toString().length
+        for (i in 1 until elementsOfOutput.size) {
+            first = elementsOfOutput[i].first
+            second = elementsOfOutput[i].second
+            it.newLine()
+            it.append(first.padStart(first.length + countSpaces))
+            it.newLine()
+            it.append(second.padStart(second.length + countSpaces + if (second.length - 1 == first.length) -1 else first.length - second.length))
+            it.newLine()
+            it.append(
+                "".padStart(first.length + if (first.length == second.length - 1) 1 else 0, '-')
+                    .padStart(countSpaces + first.length + if (second.length - 1 == first.length) 0 else 0)
+            )
+            countSpaces += first.length - (first.toInt() + second.toInt()).toString().length
+        }
+        val remainder = lhv % rhv
+        it.newLine()
+        it.append("$remainder".padStart(remainder.toString().length + countSpaces))
+    }
 }
 
