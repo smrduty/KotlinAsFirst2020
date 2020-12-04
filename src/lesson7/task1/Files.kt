@@ -507,11 +507,12 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
             var temp = if (rhv.toString().length > 1) lhvString.substring(0, rhv.toString().length).toInt()
             else lhvString.substring(0, rhv.toString().length).toInt()
             elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
+            temp -= temp / rhv * rhv
             for (i in temp.toString().length until lhvString.length) {
                 if (temp / rhv > 0) {
                     temp = lhvString[i].toString().toInt()
                     elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
-                    if (i == lhvString.length - 1) elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
+                    //if (i == lhvString.length - 1) elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
                 } else {
                     temp = 10 * temp + lhvString[i].toString().toInt()
                     elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
