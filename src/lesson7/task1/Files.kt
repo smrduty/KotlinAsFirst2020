@@ -530,13 +530,13 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
                     "0${elementsOfOutput[i].first}" to elementsOfOutput[i].second
             }
         }
-        it.write(" $lhv | $rhv")
         var first = elementsOfOutput[0].first
         var second = elementsOfOutput[0].second
-        var countSpaces = if (second == "-0") 1 else 1
+        var countSpaces = if (second.length > first.length) 1 else 0
+        it.write("${if (second.length > first.length) " " else ""}$lhv | $rhv")
         it.newLine()
         it.append(
-            (if (second == "-0") second.padStart(first.length + 1) else second) +
+            (if (second == "-0") second.padStart(first.length) else second) +
                     "".padStart(lhvString.length - first.length + 3) + "${lhv / rhv}"
         )
         it.newLine()
