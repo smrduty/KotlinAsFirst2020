@@ -504,11 +504,11 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         val lhvString = lhv.toString()
         if (lhv < rhv) elementsOfOutput.add(Pair(lhvString, "-0"))
         else {
-            var temp = if (rhv.toString().length > 1) lhvString.substring(0, rhv.toString().length).toInt()
-            else lhvString.substring(0, rhv.toString().length).toInt()
+            var temp = /*if (rhv.toString().length > 1)*/ lhvString.substring(0, rhv.toString().length).toInt()
+            //else lhvString.substring(0, rhv.toString().length).toInt()
             elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
             temp -= temp / rhv * rhv
-            for (i in temp.toString().length until lhvString.length) {
+            for (i in lhvString.substring(0, rhv.toString().length).length until lhvString.length) {
                 if (temp / rhv > 0) {
                     temp = lhvString[i].toString().toInt()
                     elementsOfOutput.add(Pair(temp.toString(), "-${(temp / rhv * rhv)}"))
