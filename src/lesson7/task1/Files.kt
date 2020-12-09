@@ -104,13 +104,14 @@ fun occurrencesString(line: String, str: String): Int {
 
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val countOfStrings = mutableMapOf<String, Int>()
-    val substringsLower = mutableSetOf<String>()
+    val substringsLower = mutableListOf<String>()
     val substringsSet = substrings.toSet().toList()
     for (i in substrings) {
-        substringsLower.add(i.toLowerCase())
         countOfStrings[i] = 0
     }
-    substringsLower.toList()
+    for (i in substringsSet.indices) {
+        substringsLower.add(substringsSet[i].toLowerCase())
+    }
     for (line in File(inputName).readLines()) {
         val lineLower = line.toLowerCase()
         for (substr in substringsLower) {
