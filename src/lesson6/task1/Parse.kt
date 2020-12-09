@@ -77,32 +77,35 @@ fun main() {
  * входными данными.
  */
 
+val months = mapOf(
+    "января" to "01",
+    "февраля" to "02",
+    "марта" to "03",
+    "апреля" to "04",
+    "мая" to "05",
+    "июня" to "06",
+    "июля" to "07",
+    "августа" to "08",
+    "сентября" to "09",
+    "октября" to "10",
+    "ноября" to "11",
+    "декабря" to "12",
+)
+
 fun dateStrToDigit(str: String): String {
     val elementsOfStr = str.split(" ")
-    try {
+    return try {
         val day = twoDigitStr(elementsOfStr[0].toInt())
         val year = elementsOfStr[2].toInt()
-        val month = when (elementsOfStr[1]) {
-            "января" -> "01"
-            "февраля" -> "02"
-            "марта" -> "03"
-            "апреля" -> "04"
-            "мая" -> "05"
-            "июня" -> "06"
-            "июля" -> "07"
-            "августа" -> "08"
-            "сентября" -> "09"
-            "октября" -> "10"
-            "ноября" -> "11"
-            "декабря" -> "12"
-            else -> ""
-        }
-        return if (daysInMonth(month.toInt(), year) < day.toInt() || month == "" || elementsOfStr.size > 3) ""
-        else "$day.$month.$year"
+        val month = months[elementsOfStr[1]]
+        if (month != null) {
+            if (daysInMonth(month.toInt(), year) < day.toInt() || elementsOfStr.size != 3) ""
+            else "$day.$month.$year"
+        } else ""
     } catch (e: IndexOutOfBoundsException) {
-        return ""
+        ""
     } catch (e: NumberFormatException) {
-        return ""
+        ""
     }
 }
 
@@ -118,34 +121,23 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     val elementsOfDigital = digital.split(".")
-    try {
+    return try {
         val day = if (elementsOfDigital[0].toInt() in 0..9) "${elementsOfDigital[0][1]}" else elementsOfDigital[0]
         val year = elementsOfDigital[2].toInt()
-        val month = when (elementsOfDigital[1]) {
-            "01" -> "января"
-            "02" -> "февраля"
-            "03" -> "марта"
-            "04" -> "апреля"
-            "05" -> "мая"
-            "06" -> "июня"
-            "07" -> "июля"
-            "08" -> "августа"
-            "09" -> "сентября"
-            "10" -> "октября"
-            "11" -> "ноября"
-            "12" -> "декабря"
-            else -> ""
+        var month = ""
+        for (i in months.keys) {
+            if (months[i] == elementsOfDigital[1]) {
+                month = i
+                break
+            }
         }
-        return if (daysInMonth(
-                elementsOfDigital[1].toInt(),
-                year
-            ) < day.toInt() || month == "" || elementsOfDigital.size > 3
+        if (daysInMonth(elementsOfDigital[1].toInt(), year) < day.toInt() || month == "" || elementsOfDigital.size != 3
         ) ""
         else "$day $month $year"
     } catch (e: IndexOutOfBoundsException) {
-        return ""
+        ""
     } catch (e: NumberFormatException) {
-        return ""
+        ""
     }
 }
 
@@ -183,17 +175,14 @@ fun isNumber(str: String): Boolean {
 }
 
 fun bestLongJump(jumps: String): Int {
+    if (jumps == "") return -1
     var max = -1
     val elements = jumps.split(" ")
-    try {
-        for (elem in elements) {
-            if (elem.length == 1 && elem != "%" && elem != "-") return -1
-            if (isNumber(elem) && elem.toInt() > max) max = elem.toInt()
-        }
-        return max
-    } catch (e: NumberFormatException) {
-        return -1
+    for (elem in elements) {
+        if (!isNumber(elem) && elem != "%" && elem != "-") return -1
+        if (isNumber(elem) && elem.toInt() > max) max = elem.toInt()
     }
+    return max
 }
 
 
@@ -219,24 +208,22 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
+
 fun plusMinus(expression: String): Int {
     var result = 0
     val elements = expression.split(" ")
-    if (Regex("""^(\d+( [+-] )?)+$""").find(expression) == null) throw IllegalArgumentException()
-    else result += elements[0].toInt()
-    for (i in 1 until elements.size) {
-        if (i % 2 == 0 && isNumber(elements[i])) {
-            when (elements[i - 1]) {
-                "+" -> result += elements[i].toInt()
-                "-" -> result -= elements[i].toInt()
-                else -> throw IllegalArgumentException()
-            }
-        } else if (i % 2 == 1 && (elements[i] == "+" || elements[i] == "-")) continue
-        else throw IllegalArgumentException()
+    if (Regex("""^(\d+( [+-] )?)+$""").matches(expression)) result += elements[0].toInt()
+    else throw IllegalArgumentException()
+    for (i in 1 until elements.size step 2) {
+        when (elements[i]) {
+            "+" -> result += elements[i + 1].toInt()
+            "-" -> result -= elements[i + 1].toInt()
+            else -> throw IllegalArgumentException()
+        }
     }
     return result
 }
-// fun
+
 /**
  * Сложная (6 баллов)
  *
@@ -249,13 +236,9 @@ fun plusMinus(expression: String): Int {
 fun firstDuplicateIndex(str: String): Int {
     val words = str.toLowerCase().split(" ")
     var sizeBeforeIndex = -1
-    try {
-        for (i in 0..words.size - 2) {
-            if (words[i] == words[i + 1]) return sizeBeforeIndex + 1
-            sizeBeforeIndex += words[i].length + 1
-        }
-    } catch (e: java.lang.IndexOutOfBoundsException) {
-        return -1
+    for (i in 0..words.size - 2) {
+        if (words[i] == words[i + 1]) return sizeBeforeIndex + 1
+        sizeBeforeIndex += words[i].length + 1
     }
     return -1
 }
