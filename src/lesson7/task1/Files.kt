@@ -114,11 +114,10 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     }
     for (line in File(inputName).readLines()) {
         val lineLower = line.toLowerCase()
-        for (substr in substringsLower) {
-            if (substr in lineLower) {
-                val index = substringsLower.indexOf(substr)
-                countOfStrings[substringsSet[index]] =
-                    countOfStrings[substringsSet[index]]!! + occurrencesString(lineLower, substr)
+        for (i in substringsLower.indices) {
+            if (substringsLower[i] in lineLower) {
+                countOfStrings[substringsSet[i]] =
+                    countOfStrings[substringsSet[i]]!! + occurrencesString(lineLower, substringsLower[i])
             }
         }
     }
