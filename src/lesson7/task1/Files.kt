@@ -66,9 +66,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
 fun deleteMarked(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use {
         for (line in File(inputName).readLines()) {
-            /*if (line.isEmpty()) {
-                it.newLine()
-            } else*/ if (!line.startsWith('_')) {
+            if (!line.startsWith('_')) {
                 it.write(line)
                 it.newLine()
             }
@@ -115,10 +113,8 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     for (line in File(inputName).readLines()) {
         val lineLower = line.toLowerCase()
         for (i in substringsLower.indices) {
-            if (substringsLower[i] in lineLower) {
-                countOfStrings[substringsSet[i]] =
-                    countOfStrings[substringsSet[i]]!! + occurrencesString(lineLower, substringsLower[i])
-            }
+            countOfStrings[substringsSet[i]] =
+                countOfStrings[substringsSet[i]]!! + occurrencesString(lineLower, substringsLower[i])
         }
     }
     return countOfStrings

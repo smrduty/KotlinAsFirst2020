@@ -94,20 +94,33 @@ val months = mapOf(
 
 fun dateStrToDigit(str: String): String {
     val elementsOfStr = str.split(" ")
+    if (elementsOfStr.size != 3) return ""
     return try {
         val day = twoDigitStr(elementsOfStr[0].toInt())
         val year = elementsOfStr[2].toInt()
         val month = months[elementsOfStr[1]]
         if (month != null) {
-            if (daysInMonth(month.toInt(), year) < day.toInt() || elementsOfStr.size != 3) ""
-            else "$day.$month.$year"
+            if (daysInMonth(month.toInt(), year) < day.toInt()) "" else "$day.$month.$year"
         } else ""
-    } catch (e: IndexOutOfBoundsException) {
-        ""
     } catch (e: NumberFormatException) {
         ""
     }
 }
+
+val digitToMonths = mapOf(
+    "01" to "января",
+    "02" to "февраля",
+    "03" to "марта",
+    "04" to "апреля",
+    "05" to "мая",
+    "06" to "июня",
+    "07" to "июля",
+    "08" to "августа",
+    "09" to "сентября",
+    "10" to "октября",
+    "11" to "ноября",
+    "12" to "декабря",
+)
 
 /**
  * Средняя (4 балла)
@@ -121,21 +134,14 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     val elementsOfDigital = digital.split(".")
+    if (elementsOfDigital.size != 3) return ""
     return try {
-        val day = if (elementsOfDigital[0].toInt() in 0..9) "${elementsOfDigital[0][1]}" else elementsOfDigital[0]
+        val day = elementsOfDigital[0].toInt()
         val year = elementsOfDigital[2].toInt()
-        var month = ""
-        for (i in months.keys) {
-            if (months[i] == elementsOfDigital[1]) {
-                month = i
-                break
-            }
-        }
-        if (daysInMonth(elementsOfDigital[1].toInt(), year) < day.toInt() || month == "" || elementsOfDigital.size != 3
-        ) ""
-        else "$day $month $year"
-    } catch (e: IndexOutOfBoundsException) {
-        ""
+        val month = digitToMonths[elementsOfDigital[1]]
+        if (month != null) {
+            if (daysInMonth(elementsOfDigital[1].toInt(), year) < day) "" else "$day $month $year"
+        } else ""
     } catch (e: NumberFormatException) {
         ""
     }
