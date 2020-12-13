@@ -523,7 +523,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         }
         var first = elementsOfOutput[0].first
         var second = elementsOfOutput[0].second
-        var countSpaces = if (second.length > first.length) 1 else 0
+        var countSpaces = if (second.length >= first.length) 1 else 0
         it.write("${if (second.length > first.length) " " else ""}$lhv | $rhv")
         it.newLine()
         it.append(
@@ -533,7 +533,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         it.newLine()
         it.append(
             "".padStart(first.length + if (first.length == second.length - 1) 1 else 0, '-')
-                .padStart(countSpaces + first.length + if (second.length - 1 == first.length) -1 else 0)
+                .padStart(countSpaces + first.length + if (second.length - 1 == first.length) -1 else -1)
         )
         countSpaces += second.length - 1 - (first.toInt() + second.toInt()).toString().length
         for (i in 1 until elementsOfOutput.size) {
@@ -551,8 +551,9 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
             countSpaces += first.length - (first.toInt() + second.toInt()).toString().length
         }
         val remainder = lhv % rhv
+        val remainderLength = remainder.toString().length
         it.newLine()
-        it.append("$remainder".padStart(remainder.toString().length + countSpaces))
+        it.append("$remainder".padStart(remainderLength + countSpaces))// - second.length + first.length))
     }
 }
 
