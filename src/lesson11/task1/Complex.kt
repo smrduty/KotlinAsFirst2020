@@ -16,12 +16,26 @@ class Complex(val re: Double, val im: Double) {
     /**
      * Конструктор из вещественного числа
      */
-    constructor(x: Double) : this(TODO(), TODO())
+    constructor(x: Double) : this(x, 0.0)
 
     /**
      * Конструктор из строки вида x+yi
      */
-    constructor(s: String) : this(TODO(), TODO())
+    constructor(s: String) : this(0.0, 0.0) {
+        val tempElements: List<String> = if ('+' in s) s.split('+') else s.split('-')
+        this.realPart = tempElements[0].toDouble()
+        if (tempElements.size > 1 && tempElements[1].length > 1) {
+            if ('+' in s) {
+                this.imaginaryPart = tempElements[1].substring(0, endIndex = tempElements[1].length - 1)
+                    .toDouble()
+            } else this.imaginaryPart = tempElements[1].substring(0, endIndex = tempElements[1].length - 1)
+                .toDouble() * -1
+        } else {
+            if ('+' in s) this.imaginaryPart = 1.0
+            else this.imaginaryPart = -1.0
+        }
+    }
+
 
     /**
      * Сложение.
@@ -52,6 +66,9 @@ class Complex(val re: Double, val im: Double) {
      * Сравнение на равенство
      */
     override fun equals(other: Any?): Boolean = TODO()
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
 
     /**
      * Преобразование в строку
