@@ -27,12 +27,10 @@ class PhoneBook() {
      * и false, если человек с таким именем уже был в телефонной книге
      * (во втором случае телефонная книга не должна меняться).
      */
-    fun addHuman(name: String): Boolean {
-        return if (name in book.keys) false
-        else {
-            book[name] = mutableSetOf()
-            true
-        }
+    fun addHuman(name: String): Boolean = if (name in book.keys) false
+    else {
+        book[name] = mutableSetOf()
+        true
     }
 
     /**
@@ -58,9 +56,9 @@ class PhoneBook() {
      * либо такой номер телефона зарегистрирован за другим человеком.
      */
     fun addPhone(name: String, phone: String): Boolean {
-        allPhones.add(phone)
         return if (name !in book.keys || book[name]!!.contains(phone) || phone in allPhones) false
         else {
+            allPhones.add(phone)
             book[name]?.add(phone)
             true
         }
@@ -85,18 +83,19 @@ class PhoneBook() {
      * Вернуть все номера телефона заданного человека.
      * Если этого человека нет в книге, вернуть пустой список
      */
-    fun phones(name: String): Set<String> {
-        return if (name !in book.keys || book[name]!!.size == 0) emptySet()
-        else book[name]!!.toSet()
-    }
+    fun phones(name: String): Set<String> = if (name !in book.keys || book[name]!!.size == 0) emptySet()
+    else book[name]!!.toSet()
 
     /**
      * Вернуть имя человека по заданному номеру телефона.
      * Если такого номера нет в книге, вернуть null.
      */
     fun humanByPhone(phone: String): String? {
-        for (i in book.keys) {
-            if (book[i]!!.contains(phone)) return i
+        if (phone !in allPhones) return null
+        else {
+            for (i in book.keys) {
+                if (book[i]!!.contains(phone)) return i
+            }
         }
         return null
     }
@@ -106,16 +105,7 @@ class PhoneBook() {
      * и каждому человеку соответствует одинаковый набор телефонов.
      * Порядок людей / порядок телефонов в книге не должен иметь значения.
      */
-    override fun equals(other: Any?): Boolean {
-        if (other is PhoneBook && this.book.keys.toSet() == other.book.keys.toSet()) {
-            for (i in this.book.keys) {
-                if (this.book[i] != other.book[i]) return false
-            }
-            return true
-        } else return false
-    }
+    override fun equals(other: Any?): Boolean = other is PhoneBook && this == other
 
-    override fun hashCode(): Int {
-        return book.hashCode()
-    }
+    override fun hashCode(): Int = book.hashCode()
 }

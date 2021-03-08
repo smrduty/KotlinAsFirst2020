@@ -11,16 +11,16 @@ package lesson11.task1
  *
  * Аргументы конструктора -- вещественная и мнимая часть числа.
  */
-class Complex(val re: Double, val im: Double) {
-    var realPart = re
-    var imaginaryPart = im
+class Complex(var re: Double, var im: Double) {
+    /*var realPart = re
+    var imaginaryPart = im*/
 
     /**
      * Конструктор из вещественного числа
      */
     constructor(x: Double) : this(x, 0.0) {
-        this.realPart = x
-        this.imaginaryPart = 0.0
+        this.re = x
+        this.im = 0.0
     }
 
     /**
@@ -28,16 +28,19 @@ class Complex(val re: Double, val im: Double) {
      */
     constructor(s: String) : this(0.0, 0.0) {
         val tempElements: List<String> = if ('+' in s) s.split('+') else s.split('-')
-        this.realPart = tempElements[0].toDouble()
-        if (tempElements.size > 1 && tempElements[1].length > 1) {
-            if ('+' in s) {
-                this.imaginaryPart = tempElements[1].substring(0, endIndex = tempElements[1].length - 1)
-                    .toDouble()
-            } else this.imaginaryPart = tempElements[1].substring(0, endIndex = tempElements[1].length - 1)
-                .toDouble() * -1
+        if (s[0] == '-') {
+            this.re = tempElements[1].toDouble() * -1
+            this.im = tempElements[2].substring(0, endIndex = tempElements[2].length - 1)
+                .toDouble() * if ('+' in s) 1 else -1
+        } else if (tempElements.size > 1 && tempElements[1].length > 1) {
+            this.re = tempElements[0].toDouble()
+            this.im = tempElements[1].substring(0, endIndex = tempElements[1].length - 1)
+                .toDouble() * if ('+' in s) 1 else -1
+        } else if (tempElements[1].length == 1) {
+            if ('+' in s) this.im = 1.0
+            else this.im = -1.0
         } else {
-            if ('+' in s) this.imaginaryPart = 1.0
-            else this.imaginaryPart = -1.0
+            this.im = 0.0
         }
     }
 
@@ -46,26 +49,24 @@ class Complex(val re: Double, val im: Double) {
      */
     operator fun plus(other: Complex): Complex =
         Complex(
-            "${this.realPart + other.realPart} ${
-                if (this.imaginaryPart + other.imaginaryPart < 0)
-                    '-' else '+'
-            } ${this.imaginaryPart + other.imaginaryPart}"
+            this.re + other.re,
+            this.im + other.im
         )
 
     /**
      * Смена знака (у обеих частей числа)
      */
-    operator fun unaryMinus(): Complex = Complex(this.imaginaryPart * -1, this.realPart * -1)
+    operator fun unaryMinus(): Complex = Complex(this.im * -1, this.re * -1)
 
     /**
      * Вычитание
      */
     operator fun minus(other: Complex): Complex =
         Complex(
-            "${this.realPart - other.realPart} ${
-                if (this.imaginaryPart + other.imaginaryPart < 0)
+            "${this.re - other.re} ${
+                if (this.im + other.im < 0)
                     '-' else '+'
-            } ${this.imaginaryPart - other.imaginaryPart}"
+            } ${this.im - other.im}"
         )
 
     /**
@@ -73,9 +74,9 @@ class Complex(val re: Double, val im: Double) {
      */
     operator fun times(other: Complex): Complex =
         Complex(
-            "${this.realPart * other.realPart - this.imaginaryPart * other.imaginaryPart} ${
-                if (this.realPart * other.imaginaryPart + other.realPart * this.imaginaryPart < 0) '-' else '+'
-            } ${this.realPart * other.imaginaryPart + other.realPart * this.imaginaryPart}"
+            "${this.re * other.re - this.im * other.im} ${
+                if (this.re * other.im + other.re * this.im < 0) '-' else '+'
+            } ${this.re * other.im + other.re * this.im}"
         )
 
     /**
@@ -84,15 +85,15 @@ class Complex(val re: Double, val im: Double) {
     operator fun div(other: Complex): Complex =
         Complex(
             "${
-                (this.realPart * other.realPart + this.imaginaryPart * other.imaginaryPart) /
-                        (other.realPart * other.realPart + other.imaginaryPart * other.imaginaryPart)
+                (this.re * other.re + this.im * other.im) /
+                        (other.re * other.re + other.im * other.im)
             } ${
-                if ((other.realPart * this.imaginaryPart - this.realPart * other.imaginaryPart)
-                    / (other.realPart * other.realPart + other.imaginaryPart * other.imaginaryPart) < 0
+                if ((other.re * this.im - this.re * other.im)
+                    / (other.re * other.re + other.im * other.im) < 0
                 ) '-' else '+'
             } ${
-                (other.realPart * this.imaginaryPart - this.realPart * other.imaginaryPart)
-                        / (other.realPart * other.realPart + other.imaginaryPart * other.imaginaryPart)
+                (other.re * this.im - this.re * other.im)
+                        / (other.re * other.re + other.im * other.im)
             }"
         )
 
@@ -101,7 +102,7 @@ class Complex(val re: Double, val im: Double) {
      */
     override fun equals(other: Any?): Boolean {
         if (other is Complex) {
-            return this.realPart == other.realPart && this.imaginaryPart == other.imaginaryPart
+            return this.re == other.re && this.im == other.im
         }
         return false
     }
@@ -109,17 +110,13 @@ class Complex(val re: Double, val im: Double) {
     /**
      * Преобразование в строку
      */
-    override fun toString(): String {
-        var str = ""
-        str += "${this.realPart}" + if (this.imaginaryPart < 0) '-' else '+' + "${this.imaginaryPart}"
-        return str
-    }
+    override fun toString(): String = "${this.re}" + "${this.im}"
 
     override fun hashCode(): Int {
         var result = re.hashCode()
         result = 31 * result + im.hashCode()
-        result = 31 * result + realPart.hashCode()
-        result = 31 * result + imaginaryPart.hashCode()
+        result = 31 * result + re.hashCode()
+        result = 31 * result + im.hashCode()
         return result
     }
 }
